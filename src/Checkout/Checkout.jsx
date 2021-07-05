@@ -1,33 +1,46 @@
 import React from "react";
+import { useProductValue } from "../contexts/ProductContext";
+import NumberFormat from "react-number-format";
+import { getCartTotal } from "../contexts/reducer";
+import CheckoutItem from "./CheckoutItem";
 
 import "./Checkout.css";
 
 export default function Checkout() {
+  const [{ cart }] = useProductValue();
   return (
     <div className="checkout">
-      <p className="checkout__heading">My Order</p>
+      <p className="checkout__heading">My Order has {cart?.length} items</p>
 
-      <div className="checkout__card">
-        <img
-          src="https://images.unsplash.com/photo-1544025162-d76694265947?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fG1lYXR8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
-          alt=""
-          className="checkout__cardImage"
-        />
-        <div className="checkout__cardDetails">
-          <p className="checkout__cardDetailsName">Bulgarian Meat</p>
-          <p className="checkout__cardDetailsPrice">UGX 20,000</p>
+      {cart?.length === 0 ? (
+        <p className="checkout__totalTitle">You have no items</p>
+      ) : (
+        <div>
+          {cart.map((item) => {
+            return (
+              <CheckoutItem
+                name={item.name}
+                image={item.image}
+                price={item.price}
+              />
+            );
+          })}
         </div>
-
-        <span class="checkout__icon material-icons">delete_outline</span>
-      </div>
+      )}
 
       <div className="checkout__total">
         <p className="checkout__totalTitle">Total</p>
-        <p className="checkout__totalNumber">UGX 20,000</p>
+        <p className="checkout__totalNumber">
+          <NumberFormat
+            thousandSeparator={true}
+            prefix={"UGX"}
+            displayType={"text"}
+            value={getCartTotal(cart)}
+          />
+        </p>
       </div>
       <div className="checkout__button">
-      <button className="actionButton">CHECKOUT</button>
-
+        <button className="actionButton">CHECKOUT</button>
       </div>
     </div>
   );
